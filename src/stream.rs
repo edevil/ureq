@@ -331,7 +331,7 @@ pub(crate) fn connect_https(unit: &Unit) -> Result<Stream, Error> {
             .map(|c| &c.0)
             .unwrap_or(&*TLS_BUILDER);
     let tls_connector = tls_builder.build().map_err(|e| Error::TlsError(e))?;
-    let stream = tls_connector.connect(hostname, sock).map_err(|e| match e {
+    let stream = tls_connector.connect(&hostname.trim_matches(|c| c == '[' || c == ']'), sock).map_err(|e| match e {
         HandshakeError::Failure(err) => Error::TlsError(err),
         _ => Error::BadStatusRead,
     })?;
